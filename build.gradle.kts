@@ -5,7 +5,7 @@ plugins {
     application
 }
 
-group = "me.cvaz"
+group = "me.guilh"
 version = "1.0-SNAPSHOT"
 
 repositories {
