@@ -37,9 +37,7 @@ class GraphStructure<I, D>: Graph<I, D> {
     // TO IMPLEMENT
 
     override val size: Int
-        get() {
-            TODO("Not yet implemented")
-        }
+        get() { TODO("Not yet implemented") }
 
     override fun addVertex(id: I, d: D): D? {
         TODO("Not yet implemented")

@@ -1,3 +1,6 @@
+import kotlin.math.abs
+import kotlin.math.max
+
 data class Node<E>(var item: E, var left: Node<E>?, var right: Node<E>?)
 
 fun <E> contains(root: Node<E>?, min: E, max: E, cmp: (e1: E, e2: E) -> Int): Boolean {
@@ -33,7 +36,7 @@ fun createBSTFromRange(start: Int, end: Int): Node<Int>? {
     var parent = root
 
     //loop to go through every element in interval
-    while (parent.item in interval) {
+    while (leftElem > interval.first && rightElem < interval.last) {
         if (parent.left == null) {
             parent.left = Node(leftElem, null, null)
             leftElem--
@@ -42,9 +45,23 @@ fun createBSTFromRange(start: Int, end: Int): Node<Int>? {
             rightElem++
         }
 
-        parent = if (isComplete(parent)) parent.left!!
+        parent = if (isBalanced(parent)) parent.left!!
         else parent.right!!
+        //parent = if (isComplete(parent)) parent.left!!
+        //        else parent.right!!
     }
     return root
 }
 
+
+fun <E> isBalanced(root:Node<E>?):Boolean{
+    return isBalancedAux(root)!=-1
+}
+
+fun <E> isBalancedAux(root:Node<E>?):Int{
+    if(root==null) return 0
+    val l= isBalancedAux(root.left)
+    val r= isBalancedAux(root.right)
+    if(l==-1 || r==-1) return -1
+    return if(abs(l-r) <=1) max(l,r) +1 else -1
+}
