@@ -1,3 +1,4 @@
+import kotlin.math.abs
 import kotlin.math.max
 
 /**Create BSTs using Ints**/
@@ -20,9 +21,9 @@ fun <E> height(root: Node<E>?): Int {
 }
 
 fun <E> search(root: Node<E>?, key: E, cmp: Comparator<E>): Node<E>? {
-    if (root == null || cmp.compare(key, root.item) == 0) return root
-    else if (cmp.compare(key, root.item) < 0) return search(root.left, key, cmp)
-    else return search(root.right, key, cmp)
+    return if (root == null || cmp.compare(key, root.item) == 0) root
+    else if (cmp.compare(key, root.item) < 0) search(root.left, key, cmp)
+    else search(root.right, key, cmp)
 }
 
 fun <E> add(root: Node<E>?, e: E, cmp: Comparator<E>): Node<E> {
@@ -60,16 +61,16 @@ fun <E> postorder(root: Node<E>?) {
 }
 
 
+fun <E> isBalanced(root:Node<E>?):Boolean{
+    return isBalancedAux(root)!=-1
+}
 
 
-
-
-
-
-
-
-
-
-
-
+fun <E> isBalancedAux(root:Node<E>?):Int{
+    if(root==null) return 0
+    val l= isBalancedAux(root.left)
+    val r= isBalancedAux(root.right)
+    if(l==-1 || r==-1) return -1
+    return if(abs(l-r) <=1) max(l,r) +1 else -1
+}
 
