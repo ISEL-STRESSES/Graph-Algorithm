@@ -9,28 +9,29 @@ class GraphStructure<I, D>: Graph<I, D> {
         override var id: I
             //get() = TODO("Not yet implemented")
 
-        private val mSet = mutableSetOf<Graph.Edge<I>?>(null)
+        private val edges = mutableSetOf<Graph.Edge<I>?>()
+
         constructor(Id: I, Data: D){
             data = Data
             id = Id
         }
 
         override fun getAdjacencies(): MutableSet<Graph.Edge<I>?> {
-            return mSet
+            return edges
         }
 
         override fun setData(newData: D): D {
-            this.data = newData
-            return newData
+            val oldData = data
+            data = newData
+            return oldData
         }
 
     }
 
     private class Edge<I> : Graph.Edge<I> {
         override var adjacent: I
-            //get() = TODO("Not yet implemented")
+
         override var id: I
-            //get() = TODO("Not yet implemented")
 
         constructor(Adjacent: I, Id: I) {
             adjacent = Adjacent
@@ -38,27 +39,29 @@ class GraphStructure<I, D>: Graph<I, D> {
         }
     }
 
-    private val initialSize = 10
+    private val defaultSize = 11
 
-    private val map = HashMap<I,Graph.Vertex<I,D>>(initialSize)
+    val map = HashMap<I, Graph.Vertex<I, D>>(defaultSize)
 
-    override val size: Int = map.size
-        //get() { TODO("Not yet implemented") }
+    override val size: Int
+        get() {
+            return map.size
+        }
 
     override fun addVertex(id: I, d: D): D? {
         val vertex = getVertex(id)
         if (vertex != null) return null
 
-        vertex?.set(id, Vertex(id,d))
+        map[id] = Vertex(id,d)
         return d
     }
 
     override fun addEdge(id: I, idAdj: I): I? {
-        val vertex = getVertex(id) ?: return null
-        if (getEdge(id,idAdj) != null) return null
+        val idVertex = getVertex(id) ?: return null
+        if (getEdge(id, idAdj) != null) return null
 
-        vertex.getAdjacencies().add(Edge(id,idAdj))
-        return id
+        idVertex.getAdjacencies().add(Edge(id,idAdj))
+        return idAdj
     }
 
     override fun getVertex(id: I): Graph.Vertex<I, D>? {
@@ -66,7 +69,11 @@ class GraphStructure<I, D>: Graph<I, D> {
     }
 
     override fun getEdge(id: I, idAdj: I): Graph.Edge<I>? {
-        TODO("Not yet implemented")
+        val address = getVertex(id) ?: return null
+        address.getAdjacencies().forEach{
+            if( it!!.adjacent == idAdj) return it
+        }
+        return null
     }
 
     override fun iterator(): Iterator<Graph.Vertex<I, D>> {
@@ -85,16 +92,17 @@ class GraphStructure<I, D>: Graph<I, D> {
     }
 
     override fun edgesIterator(): Iterator<Graph.Edge<I>> {
-        return object : Iterator<Graph.Edge<I>> {
-            val iterator = map.mSet.iterator()
-
-            override fun hasNext(): Boolean {
-                return iterator.hasNext()
-            }
-
-            override fun next(): Graph.Edge<I> {
-                return iterator.next().adjacent
-            }
-        }
+        TODO("NOt yet implemented")
+//        return object : Iterator<Graph.Edge<I>> {
+//            val iterator = map.mSet.iterator()
+//
+//            override fun hasNext(): Boolean {
+//                return iterator.hasNext()
+//            }
+//
+//            override fun next(): Graph.Edge<I> {
+//                return iterator.next().adjacent
+//            }
+//        }
     }
 }
