@@ -3,23 +3,23 @@ package graphCollections
 /**
  * Class that implements a non-oriented Graph.
  */
-class GraphStructure<I, D>: Graph<I, D> {
+class GraphStructure<I, D> : Graph<I, D> {
 
     /**
      * Class that implements the Vertex of a graph.
      * @property data Data of a given Vertex.
      * @property id Identifier of a Graph.
-     * @property edges Set od edges (aka) reference of ...
+     * @property edges Set od edges (aka) reference of links between Vertexes.
      */
-    private class Vertex<I,D> :Graph.Vertex<I,D> {
+    private class Vertex<I, D> : Graph.Vertex<I, D> {
 
         override var data: D
 
-        override var id: I
+        override val id: I
 
         private val edges = mutableSetOf<Graph.Edge<I>?>()
 
-        constructor(Id: I, Data: D){
+        constructor(Id: I, Data: D) {
             data = Data
             id = Id
         }
@@ -35,12 +35,11 @@ class GraphStructure<I, D>: Graph<I, D> {
         /**
          * Function that replaces the data of a given Vertex.
          * @param newData New data to store in the Vertex.
-         * @return Returns (previous or new) ??????? data.
+         * @return Returns the new data.
          */
         override fun setData(newData: D): D {
-            val oldData = data
             data = newData
-            return oldData
+            return newData
         }
 
     }
@@ -51,9 +50,10 @@ class GraphStructure<I, D>: Graph<I, D> {
      * @property adjacent Identifier of the destiny Edge.
      */
     private class Edge<I> : Graph.Edge<I> {
-        override var adjacent: I
 
-        override var id: I
+        override val adjacent: I
+
+        override val id: I
 
         constructor(Adjacent: I, Id: I) {
             adjacent = Adjacent
@@ -61,9 +61,8 @@ class GraphStructure<I, D>: Graph<I, D> {
         }
     }
 
-    //private val defaultSize = 11
+    val map = HashMap<I, Graph.Vertex<I, D>>()
 
-    val map = HashMap<I, Graph.Vertex<I, D>>(/*defaultSize*/)
 
     override val size: Int
         get() {
@@ -81,7 +80,7 @@ class GraphStructure<I, D>: Graph<I, D> {
         val vertex = getVertex(id)
         if (vertex != null) return null
 
-        map[id] = Vertex(id,d)
+        map[id] = Vertex(id, d)
         return d
     }
 
@@ -93,10 +92,10 @@ class GraphStructure<I, D>: Graph<I, D> {
      * @return Returns the iD of the adjacent vertex or null if it doesn't exist.
      */
     override fun addEdge(id: I, idAdj: I): I? {
-        val idVertex = getVertex(id) ?: return null
-        if (getEdge(id, idAdj) != null) return null
+        val address = getVertex(id) ?: return null
+        if (getEdge(id, idAdj) != null || getEdge(idAdj, id) != null) return null
 
-        idVertex.getAdjacencies().add(Edge(id,idAdj))
+        address.getAdjacencies().add(Edge(id, idAdj))
         return idAdj
     }
 
@@ -117,8 +116,8 @@ class GraphStructure<I, D>: Graph<I, D> {
      */
     override fun getEdge(id: I, idAdj: I): Graph.Edge<I>? {
         val address = getVertex(id) ?: return null
-        address.getAdjacencies().forEach{
-            if( it!!.adjacent == idAdj) return it
+        address.getAdjacencies().forEach {
+            if (it!!.adjacent == idAdj) return it
         }
         return null
     }
@@ -128,7 +127,7 @@ class GraphStructure<I, D>: Graph<I, D> {
      * @return Returns an Iterable object that allows to iterate over the Vertices.
      */
     override fun iterator(): Iterator<Graph.Vertex<I, D>> {
-        return object :Iterator<Graph.Vertex<I, D>> {
+        return object : Iterator<Graph.Vertex<I, D>> {
             val iterator = map.iterator()
 
             override fun hasNext(): Boolean {
@@ -143,20 +142,45 @@ class GraphStructure<I, D>: Graph<I, D> {
     }
 
     /**
-     *
+     * Function that makes the Set of Edges iterable.
+     * @return Returns an Iterable object that allows to iterate over the Edges.
      */
     override fun edgesIterator(): Iterator<Graph.Edge<I>> {
-        TODO("NOt yet implemented")
-//        return object : Iterator<Graph.Edge<I>> {
-//            val iterator = map.mSet.iterator()
-//
-//            override fun hasNext(): Boolean {
-//                return iterator.hasNext()
-//            }
-//
-//            override fun next(): Graph.Edge<I> {
-//                return iterator.next().adjacent
-//            }
-//        }
+
+        return object : Iterator<Graph.Edge<I>> {
+            val vertexIterator = map.iterator()
+            var edgeIterator: MutableIterator<Graph.Edge<I>?>? = null
+            var currentEdge: Graph.Edge<I>? = null
+
+            override fun hasNext(): Boolean {
+                if (currentEdge != null)
+                    return true
+                if (vertexIterator.hasNext()) {
+
+                    if (edgeIterator == null) {
+                        edgeIterator = vertexIterator.next().value.getAdjacencies().iterator()
+                        hasNext()
+
+                    } else {
+
+                        if (edgeIterator!!.hasNext()) {
+                            currentEdge = edgeIterator!!.next()
+                            return true
+                        } else {
+                            edgeIterator = null
+                            hasNext()
+                        }
+                    }
+                }
+                return false
+            }
+
+            override fun next(): Graph.Edge<I> {
+                if (!hasNext()) throw NoSuchElementException("No such edge")
+                val aux = edgeIterator
+                edgeIterator = null
+                return aux!!.next()!!
+            }
+        }
     }
 }

@@ -43,17 +43,20 @@ class CreateBSTFromRangeTest {
     }
 
     @Test
-    fun createBST_od_leaves_tree() {
+    fun createBST_odd_leaves_tree() {
         val start = 0
         val end = 11
         val mid = end - (end - start)/2
         val parent = singleNodeBST(mid)
         val interval = (start..end)
-        val rigth = IntArray((mid +1..end).step)
-        val left = IntArray((start until mid).step)
-        //val populate = add(parent,rigth,cmp)
+        for (i in interval) {
+            if (i % 2 == 0)
+                add(parent,mid - i,cmp)
+            else add(parent, mid + i, cmp)
+        }
+        //val populate = add(parent,right,cmp)
         val tree = createBSTFromRange(start,end)
-        //assertEqual(populate,tree)
+        assertEqual(parent,tree)
     }
 
 
