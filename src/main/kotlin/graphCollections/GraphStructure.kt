@@ -11,13 +11,11 @@ class GraphStructure<I, D> : Graph<I, D> {
      * @property id Identifier of a Graph.
      * @property edges Set od edges (aka) reference of links between Vertexes.
      */
-    private data class Vertex<I, D>(override val id: I, override var data: D) : Graph.Vertex<I, D> {
+    data class Vertex<I, D>(override val id: I, override var data: D) : Graph.Vertex<I, D> {
 
         //override var data: D = Data
-
+        val edges = mutableSetOf<Graph.Edge<I>?>()
         //override val id: I = Id
-
-        private val edges = mutableSetOf<Graph.Edge<I>?>()
 
         /**
          * Function that returns a set of every adjacent Edges of a Vertex.
@@ -44,7 +42,7 @@ class GraphStructure<I, D> : Graph<I, D> {
      * @property id Identifier of the origin Edge.
      * @property adjacent Identifier of the destiny Edge.
      */
-    private data class Edge<I>(override val id: I, override val adjacent: I) : Graph.Edge<I> {
+    data class Edge<I>(override val id: I, override val adjacent: I) : Graph.Edge<I> {
 
         //override val adjacent: I = Adjacent
 
