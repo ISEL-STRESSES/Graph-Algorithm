@@ -84,6 +84,8 @@ class GraphStructure<I, D> : Graph<I, D> {
      */
     override fun addEdge(id: I, idAdj: I): I? {
         val address = getVertex(id) ?: return null
+        val secound = getVertex(idAdj) ?: return null
+
         //if (getEdge(id, idAdj) != null || getEdge(idAdj, id) != null) return null
 
         address.getAdjacencies().add(Edge(id, idAdj))
