@@ -14,7 +14,7 @@ class GraphStructure<I, D> : Graph<I, D> {
     data class Vertex<I, D>(override val id: I, override var data: D) : Graph.Vertex<I, D> {
 
         //override var data: D = Data
-        val edges = mutableSetOf<Graph.Edge<I>?>()
+        private val edges = mutableSetOf<Graph.Edge<I>?>()
         //override val id: I = Id
 
         /**
@@ -84,7 +84,7 @@ class GraphStructure<I, D> : Graph<I, D> {
      */
     override fun addEdge(id: I, idAdj: I): I? {
         val address = getVertex(id) ?: return null
-        val secound = getVertex(idAdj) ?: return null
+        //val second = getVertex(idAdj) ?: return null
 
         //if (getEdge(id, idAdj) != null || getEdge(idAdj, id) != null) return null
 
@@ -145,6 +145,10 @@ class GraphStructure<I, D> : Graph<I, D> {
             var edgeIterator: MutableIterator<Graph.Edge<I>?>? = null
             var currentEdge: Graph.Edge<I>? = null
 
+
+            /**
+             *
+             */
             override fun hasNext(): Boolean {
                 if (currentEdge != null)
                     return true
@@ -168,6 +172,10 @@ class GraphStructure<I, D> : Graph<I, D> {
                 return false
             }
 
+
+            /**
+             *
+             */
             override fun next(): Graph.Edge<I> {
                 if (!hasNext()) throw NoSuchElementException("No such edge")
                 val aux = edgeIterator
